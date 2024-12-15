@@ -1,19 +1,63 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import axios from 'axios'
 import "./AddNotePage.css"
 
-const EditNotePage = () => {
+
+const EditNotePage = ({updateNote}) => {
+
+  const [title, setTitle] = useState("")
+  const [body, setBody] = useState("")
+  const [category, setCategory] = useState("")
+
+  // can eaisly get a slug using useParams
+  const {slug} = useParams()
+  const navigate = useNavigate()
+
+
+  useEffect(() => {
+    // slug is a dynamic value
+    axios.get(`http://127.0.0.1:8008/notes/${slug}`)
+    .then(res =>{
+      console.log(res.data)
+      setTitle(res.data.title) // recive the data from the database
+      setBody(res.data.body)
+      setCategory(res.data.category)
+    })
+    .catch(err => {
+      console.log(err.message)
+    })
+  },[slug]) // dependency array
+
+
+  // new note object
+  const updateNoteObject ={
+    title: title,
+    body: body,
+    category: category
+  }
+  // when form is submitted
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    // if any of these categories are empty we are not going to update the note
+    if(!title && !body && !category) return;
+    updateNote(updateNoteObject, slug)
+    navigate(`/notes/${slug}`)
+
+  }
   return (
-    <form>
-      <h5>Add New Note</h5>
+    <form onSubmit={handleSubmit}>
+      <h5>Update Note</h5>
       <div className="mb-3">
         <label htmlFor="exampleFormControlInput1" className="form-label">
           Title
         </label>
         <input
-          type="email"
           className="form-control"
           id="exampleFormControlInput1"
           placeholder="Enter note's title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
       </div>
 
@@ -26,6 +70,8 @@ const EditNotePage = () => {
           id="exampleFormControlTextarea1"
           rows={4}
           placeholder="Enter note's content"
+          value={body}
+          onChange={(e) => setBody(e.target.value)} // when new values are typed to changed
         ></textarea>
       </div>
 
@@ -33,18 +79,17 @@ const EditNotePage = () => {
       <label htmlFor="exampleFormControlTextarea1" className="form-label">
           Note's category
         </label>
-      <select className="form-select" aria-label="Default select example" style={{height: "40px"}}>
-          <option selected>Pick a category</option>
-          <option value="1">Business</option>
-          <option value="2">Personal</option>
-          <option value="3">Important</option>
+      <select className="form-select" aria-label="Default select example" style={{height: "40px"}} value={category}
+                onChange={(e) => setCategory(e.target.value)}
+      >
+          <option value="">Pick a category</option>
+          <option value="BUSINESS">Business</option>
+          <option value="PERSONAL">Personal</option>
+          <option value="IMPORTANT">Important</option>
         </select>
       </div>
 
-        
-
-
-      <button className="btn btn-primary d-flex justify-content-center" style={{width:"100%"}}>Add Note</button>
+      <button className="btn btn-primary d-flex justify-content-center" style={{width:"100%"}}>Update Note</button>
     </form>
   )
 }

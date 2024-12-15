@@ -6,13 +6,20 @@ import { FiEdit } from "react-icons/fi";
 import { Link, useParams } from "react-router-dom"
 import { FormatDate } from "../components/FormatDate";
 import axios from "axios";
+import Modal from "../components/Modal";
 
 
-const NoteDetailPage = () => {
+const NoteDetailPage = ({deleteNote}) => {
 
   const [note, setNote] = useState({})
-
   const {slug} = useParams()
+  const [isOpen, setisOpen] = useState(false)
+
+  const handleIsOpen = () =>{
+    setisOpen(!isOpen)
+  }
+
+ 
 
   // fetch from the api (django)
   useEffect(() => {
@@ -26,7 +33,9 @@ const NoteDetailPage = () => {
         console.log(err.message);
       });
   }, [slug]);
+
   return (
+    <>
     <div className="note-container">
     <h3 className="title">{note.title}</h3>
     <span className="d-flex justify-content-center">
@@ -45,10 +54,23 @@ const NoteDetailPage = () => {
           <span>Edit</span>
         </button>
       </Link>
-
+      <button className="btn btn-danger" onClick={handleIsOpen}>
+            <BiSolidTrashAlt />
+            <span>Delete</span>
+          </button>
     </span>
     <p className="description">{note.body}</p>
   </div>
+    {/* If isopen is false the modal will not display */}
+    {isOpen && (
+        <Modal
+          handleIsOpen={handleIsOpen}
+          deleteNote={() => deleteNote(slug)}
+        />
+      )}
+    </>
+    
+    
   )
 }
 

@@ -1,6 +1,9 @@
 import React from 'react'
 import NavBar from '../components/NavBar'
 import {Outlet} from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const MainLayout = () => {
   return (
@@ -8,9 +11,10 @@ const MainLayout = () => {
         // Nav bar is the parent element
         // Outlet is the different pages view
     <>
-    <NavBar /> 
+    <NavBar />
+    <ToastContainer /> 
     <Outlet /> 
-    
+
     </>
   )
 }
