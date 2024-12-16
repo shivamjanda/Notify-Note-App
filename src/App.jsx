@@ -19,6 +19,37 @@ const App = () => {
 // declare state
   const [notes, setNotes] = useState([])
   const [isLoading, setIsLoading] = useState(false);
+  const [filterText, setFilterText] = useState("")
+  const [searchText, setSearchText] = useState("")
+
+
+  const handleFilterText = (val) => {
+    setFilterText(val)
+  }
+
+  const handleSearchText = (val) => {
+    setSearchText(val)
+  }
+
+  const filteredNotes = 
+    filterText == "BUSINESS" ? notes.filter(note => note.category == "BUSINESS")
+    : filterText === "PERSONAL" ? notes.filter(note => note.category == "PERSONAL") 
+    : filterText === "IMPORTANT" ? notes.filter(note => note.category == "IMPORTANT")
+    : notes
+
+  
+  useEffect(() => {
+    if(searchText.length < 3) return;
+    axios.get(`http://127.0.0.1:8008/notes-search/?search=${searchText}`)
+    .then(res => {
+      console.log(res.data)
+      setNotes(res.data)
+    })
+    .catch(err => {
+      console.log(err.message)
+    })
+  }, [searchText])
+
   // fetch note data from back end
   useEffect(() =>{
     setIsLoading(true) // if data is being fetched
@@ -80,8 +111,8 @@ const deleteNote = (slug) => {
      // We have given the note information that was recieved from the backend (django)
      // Route AddNote is the add note page inerface where we add a new note.
     
-     <Route path="/" element={<MainLayout />}> 
-              <Route index element={<HomePage  notes={notes} loading={isLoading}/>} />
+     <Route path="/" element={<MainLayout searchText={searchText} handleSearchText={handleSearchText} />}> 
+              <Route index element={<HomePage  notes={filteredNotes} loading={isLoading} handleFilterText={handleFilterText}/>} />
               <Route path="/add-note" element={<AddNotePage addNote={addNote}/>}/>
               <Route path="/edit-note/:slug" element={<EditNotePage updateNote={updateNote} />}/>
               <Route path="/notes/:slug" element={<NoteDetailPage deleteNote={deleteNote} />}/>

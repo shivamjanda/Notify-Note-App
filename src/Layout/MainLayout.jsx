@@ -5,13 +5,13 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 
 
-const MainLayout = () => {
+const MainLayout = ({searchText, handleSearchText}) => {
   return (
         // Nav bar is on every page
         // Nav bar is the parent element
         // Outlet is the different pages view
     <>
-    <NavBar />
+    <NavBar  searchText={searchText} handleSearchText={handleSearchText} />
     <ToastContainer /> 
     <Outlet /> 
 

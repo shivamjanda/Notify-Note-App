@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Filter = () => {
+const Filter = ({handleFilterText}) => {
   return (
     <div className="container" style={{ width: "500px", margin: "20px auto" }}>
     <select
